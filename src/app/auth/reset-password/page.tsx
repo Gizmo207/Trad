@@ -43,6 +43,7 @@ export default function ResetPasswordPage() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
+              autoComplete="new-password"
               className="w-full p-3 bg-white/20 border border-white/30 rounded-lg text-white placeholder-white/50"
             />
             <input
@@ -51,6 +52,7 @@ export default function ResetPasswordPage() {
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
               required
+              autoComplete="new-password"
               className="w-full p-3 bg-white/20 border border-white/30 rounded-lg text-white placeholder-white/50"
             />
             <button
