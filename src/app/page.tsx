@@ -1,41 +1,46 @@
 'use client';
 
-import Head from 'next/head';
+import Image from 'next/image';
+import Link from 'next/link';
 
-export default function LandingPage() {
+export default function Home() {
   return (
-    <>
-      <Head>
-        <title>Welcome to Trad</title>
-        <meta name="description" content="Trad - Find love with timeless values." />
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
-
-      <div
-        className="min-h-screen flex items-center justify-center bg-cover bg-center"
-        style={{ backgroundImage: "url('/images/landing-bg.jpg')" }}
-      >
-        <div className="bg-white/10 backdrop-blur-md p-10 rounded-2xl shadow-2xl border border-white/30 max-w-xl w-full text-center text-white">
-          <h1 className="text-4xl font-bold mb-4">Welcome to Trad</h1>
-          <p className="mb-6 text-lg">
-            A dating app for people who value tradition, commitment, and love that lasts.
-          </p>
-          <div className="flex flex-col gap-4 sm:flex-row justify-center">
-            <a
-              href="/signup"
-              className="px-6 py-3 rounded-lg bg-white text-gray-900 font-semibold hover:bg-gray-100 transition"
-            >
-              Get Started
-            </a>
-            <a
-              href="/login"
-              className="px-6 py-3 rounded-lg border border-white text-white hover:bg-white hover:text-gray-900 transition"
-            >
-              Log In
-            </a>
+    <main
+      className="min-h-screen bg-cover bg-center flex flex-col justify-between"
+      style={{ backgroundImage: "url('/images/landing-bg.jpg')" }}
+    >
+      {/* Welcome Box */}
+      <div className="flex-grow flex items-center justify-center px-4 transform translate-y-10">
+        <div className="bg-white/10 backdrop-blur-lg rounded-xl p-8 shadow-lg text-center max-w-lg w-full border border-white/30">
+          <h1 className="text-4xl font-bold text-white mb-4">Welcome to Trad 🕊️</h1>
+          <p className="text-white text-md mb-6">Meaningful connections rooted in tradition</p>
+          <div className="flex justify-center gap-4">
+            <Link href="/signup">
+              <button className="px-5 py-2 bg-black text-white rounded hover:bg-white/30 transition">
+                Sign Up
+              </button>
+            </Link>
+            <Link href="/login">
+              <button className="px-5 py-2 bg-black text-white rounded hover:bg-white/30 hover:text-black transition">
+                Log In
+              </button>
+            </Link>
           </div>
         </div>
       </div>
-    </>
+
+      {/* Quotes Section */}
+      <div className="w-full flex flex-col items-center gap-6 pb-16 px-4 md:px-20">
+        <div className="bg-white/10 backdrop-blur-lg border border-white/30 rounded-xl px-6 py-4 max-w-3xl w-full text-white text-center shadow-lg">
+          💍 <span className="text-lg md:text-xl font-light">“Love built on values lasts a lifetime.”</span>
+        </div>
+        <div className="bg-white/10 backdrop-blur-lg border border-white/30 rounded-xl px-6 py-4 max-w-3xl w-full text-white text-center shadow-lg">
+          👨‍👩‍👧 <span className="text-lg md:text-xl font-light">“Trad isn’t just dating, it’s legacy.”</span>
+        </div>
+        <div className="bg-white/10 backdrop-blur-lg border border-white/30 rounded-xl px-6 py-4 max-w-3xl w-full text-white text-center shadow-lg">
+          💒 <span className="text-lg md:text-xl font-light">“Skip the swipes — meet someone serious.”</span>
+        </div>
+      </div>
+    </main>
   );
 }
