@@ -1,36 +1,38 @@
 'use client';
 
 import { useState } from 'react';
-import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
+import { createUserWithEmailAndPassword, sendEmailVerification } from 'firebase/auth';
+import { auth } from '@/firebase/firebaseConfig';
 
-export default function SignUpPage() {
+export default function SignupPage() {
+  const router = useRouter();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [confirm, setConfirm] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const router = useRouter();
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
+    setLoading(true);
     setError('');
 
-    if (password !== confirm) {
-      return setError('Passwords do not match.');
-    }
-
     try {
-      setLoading(true);
-      // Placeholder for Firebase sign-up logic
-      console.log('Signing up with:', email);
-
-      // Simulate success
-      setTimeout(() => {
-        router.push('/auth/verify-email');
-      }, 1500);
-    } catch (err) {
-      setError('Failed to create account.');
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      await sendEmailVerification(userCredential.user);
+      router.push('/auth/verify_email');
+    } catch (err: any) {
+      if (err.code === 'auth/email-already-in-use') {
+        setError('That email is already in use. Try logging in instead.');
+      } else if (err.code === 'auth/weak-password') {
+        setError('Password should be at least 6 characters.');
+      } else if (err.code === 'auth/invalid-email') {
+        setError('Invalid email address.');
+      } else {
+        setError('Something went wrong. Please try again.');
+      }
+      console.error('Signup error:', err);
     } finally {
       setLoading(false);
     }
@@ -38,86 +40,58 @@ export default function SignUpPage() {
 
   return (
     <main
-      className="min-h-screen bg-cover bg-center flex items-center justify-center px-4"
+      className="min-h-screen bg-cover bg-center flex items-center justify-center px-4 text-white"
       style={{ backgroundImage: "url('/images/sign_up-bg.png')" }}
     >
-      <div className="bg-white/10 backdrop-blur-lg border border-white/30 rounded-xl shadow-lg p-8 w-full max-w-md">
-        <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-white mb-2">Create an Account</h1>
-          <p className="text-white/80">Start your journey with Trad</p>
-        </div>
+      <div className="bg-white/10 backdrop-blur-lg border border-white/30 rounded-xl shadow-lg p-8 w-full max-w-md text-center space-y-6">
+        <h1 className="text-2xl font-bold">Create Your Account</h1>
+        <p className="text-white/80 text-sm">Start your journey with Trad today.</p>
 
         {error && (
-          <div className="bg-red-500/20 backdrop-blur-sm text-white p-3 rounded-lg mb-6 text-center">
+          <div className="bg-red-500/20 text-white p-3 rounded-md text-sm">
             {error}
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <div>
-            <label htmlFor="email" className="block text-white mb-2 text-sm font-medium">
-              Email Address
-            </label>
-            <input
-              id="email"
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="w-full p-3 bg-white/20 border border-white/30 rounded-lg text-white placeholder:text-white/50"
-              placeholder="you@example.com"
-              required
-            />
-          </div>
+        <form onSubmit={handleSignup} className="space-y-4">
+          <input
+            type="email"
+            name="email"
+            autoComplete="email"
+            placeholder="you@example.com"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+            className="w-full p-3 bg-white/20 border border-white/30 rounded-lg text-white placeholder-white/50"
+          />
 
-          <div>
-            <label htmlFor="password" className="block text-white mb-2 text-sm font-medium">
-              Password
-            </label>
-            <input
-              id="password"
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full p-3 bg-white/20 border border-white/30 rounded-lg text-white placeholder:text-white/50"
-              placeholder="••••••••"
-              required
-              minLength={6}
-            />
-          </div>
-
-          <div>
-            <label htmlFor="confirm" className="block text-white mb-2 text-sm font-medium">
-              Confirm Password
-            </label>
-            <input
-              id="confirm"
-              type="password"
-              value={confirm}
-              onChange={(e) => setConfirm(e.target.value)}
-              className="w-full p-3 bg-white/20 border border-white/30 rounded-lg text-white placeholder:text-white/50"
-              placeholder="••••••••"
-              required
-              minLength={6}
-            />
-          </div>
+          <input
+            type="password"
+            name="new-password"
+            autoComplete="new-password"
+            placeholder="Create a password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+            minLength={6}
+            className="w-full p-3 bg-white/20 border border-white/30 rounded-lg text-white placeholder-white/50"
+          />
 
           <button
             type="submit"
             disabled={loading}
-            className={`w-full py-3 rounded-lg transition-all font-medium ${
-              loading
-                ? 'bg-black/50 text-white/70'
-                : 'bg-black text-white hover:bg-white/30'
+            className={`w-full py-3 rounded-lg transition font-medium ${
+              loading ? 'bg-black/50 text-white/70' : 'bg-black text-white hover:bg-white/30'
             }`}
           >
             {loading ? 'Creating account...' : 'Sign Up'}
           </button>
         </form>
 
-        <div className="mt-8 text-center">
-          <p className="text-white">
+        <div>
+          <p className="text-white text-sm">
             Already have an account?{' '}
-            <Link href="/auth/login" className="text-white font-medium hover:underline">
+            <Link href="/auth/login" className="font-medium hover:underline">
               Log In
             </Link>
           </p>
